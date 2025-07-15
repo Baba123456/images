@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Basket Game - HTML5</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #fff;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+      margin: auto;
+      background-color: #f0f0f0;
+      border: 2px solid #000;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas" width="400" height="500"></canvas>
+
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    let ball = { x: 200, y: 450, radius: 10, shooting: false };
+    let basket = { x: 0, y: 50, width: 80, height: 20, dx: 2 };
+    let score = 0;
+
+    function drawBasket() {
+      ctx.fillStyle = "orange";
+      ctx.fillRect(basket.x, basket.y, basket.width, basket.height);
+    }
+
+    function drawBall() {
+      ctx.fillStyle = "red";
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawScore() {
+      ctx.fillStyle = "black";
+      ctx.font = "18px Arial";
+      ctx.fillText("Score: " + score, 10, 20);
+    }
+
+    function resetBall() {
+      ball.x = 200;
+      ball.y = 450;
+      ball.shooting = false;
+    }
+
+    function update() {
+      // Move basket
+      basket.x += basket.dx;
+      if (basket.x <= 0 || basket.x + basket.width >= canvas.width) {
+        basket.dx *= -1;
+      }
+
+      // Shoot ball
+      if (ball.shooting) {
+        ball.y -= 5;
+        if (ball.y <= basket.y + basket.height) {
+          if (ball.x >= basket.x && ball.x <= basket.x + basket.width) {
+            score++;
+            alert("🏀 Panier réussi !");
+          }
+          resetBall();
+        }
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawBasket();
+      drawBall();
+      drawScore();
+    }
+
+    function gameLoop() {
+      update();
+      draw();
+      requestAnimationFrame(gameLoop);
+    }
+
+    canvas.addEventListener("click", () => {
+      if (!ball.shooting) {
+        ball.shooting = true;
+      }
+    });
+
+    gameLoop();
+  </script>
+</body>
+</html>
